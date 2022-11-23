@@ -1,4 +1,4 @@
-console.log('hi')
+// console.log('hi')
 
 // will be determined by the user choice
 var gLevel = {
@@ -6,20 +6,27 @@ var gLevel = {
   mines: 2,
 }
 
-gGame = {
+var gGame = {
   isOn: false,
   shownCount: 0,
   markedCount: 0,
   secsPassed: 0,
 }
 
+const MINE = '💣'
+const FLAG = '🚩'
+
 var gBoard
 
 function initGame() {
   gGame.isOn = true
   gBoard = createBoard(gLevel.size)
-  console.table(gBoard)
-  console.log('gBoard', gBoard)
+  setMinesRnd(gBoard)
+
+  //   console.table(gBoard)
+  //   console.log('gBoard', gBoard)
+  // todo: set timer (will be activated with first board click)
+  // todo: set mines count
   renderBoard(gBoard)
 }
 
@@ -40,8 +47,8 @@ function createBoard(boardSize) {
       }
     }
   }
-  board[1][1].isMine = true
-  board[1][0].isMine = true
+  //   board[1][1].isMine = true
+  //   board[1][0].isMine = true
   return board
 }
 
@@ -53,11 +60,11 @@ function renderBoard(board) {
       const cellContent = ''
       var type = board[i][j].isMine ? 'mine' : 'not-mine'
       var shown = board[i][j].isShown ? 'shown' : ''
-      const className = `cell type-${type} ${shown} i-${i}j-${j}`
+      const classes = `cell type-${type} ${shown} i-${i}j-${j}`
 
-      strHTML += `<td data-i="${i}" data-j="${j}" 
-      class="${className}"
-      onclick="onCellClicked(this, ${i}, ${j})">
+      strHTML += `<td id="cell-${i}-${j}" 
+      class="${classes}"
+      onmousedown="onCellClicked(this, ${i}, ${j},event)">
       ${cellContent}
       </td>`
     }
@@ -69,77 +76,181 @@ function renderBoard(board) {
   elBoard.innerHTML = strHTML
 }
 
-function setMinesNegsCount(cellI, cellJ, board) {
-  var MinesNegsCount = 0
+function onCellClicked(elCell, i, j, event) {
+  console.log('elCell', elCell)
+  //   console.log('event', event)
+  //   check if game is on
+  if (!gGame.isOn) return
+
+  //   check which mouse button was clicked
+  switch (event.button) {
+    case 0:
+      console.log('left')
+
+      //   check cell type - if mine
+      if (elCell.classList.contains('type-mine')) {
+        // execute game over
+        // todo: show all mines (should be in game over?)
+        gameOver()
+      }
+
+      //   check cell type - if not mine
+      if (elCell.classList.contains('type-not-mine')) {
+        console.log('open cell')
+        // console.log('gBoard[i][j].isShown', gBoard[i][j].isShown)
+        // check if already shown
+        if (gBoard[i][j].isShown) return
+
+        // check negs
+        var minesNegsCount = setMinesNegsCount(i, j, gBoard)
+        // update cell
+        updateCellShown(i, j, minesNegsCount)
+
+        // if no mines are negs - open negs
+        if (!minesNegsCount) {
+          expandShown(gBoard, elCell, i, j)
+        }
+      }
+      break
+
+    case 2:
+      if (gBoard[i][j].isShown) return
+      console.log('right')
+      updateCellMarked(elCell, i, j)
+      break
+  }
+}
+
+function updateCellMarked(elCell, i, j) {
+  // update cell object data - key isMarked:true
+  gBoard[i][j].isMarked = true
+  //   update style
+  elCell.classList.toggle('marked')
+  //   elCell.innerText = FLAG
+}
+
+function updateCellShown(i, j, minesNegsCount) {
+  // update cell object data - key isShown:true
+  gBoard[i][j].isShown = true
+  const elCurrCell = document.querySelector(`.i-${i}j-${j}`)
+  console.log('elCurrCell', elCurrCell)
+  // show how many negs are mines only if its a valid value
+  if (minesNegsCount) elCurrCell.innerText = `${minesNegsCount}`
+  //   update style
+  elCurrCell.classList.add('shown')
+}
+
+function expandShown(board, elCell, cellI, cellJ) {
+  //   console.log('elCell', elCell)
+  var negs = []
   for (var i = cellI - 1; i <= cellI + 1; i++) {
     if (i < 0 || i >= board.length) continue
     for (var j = cellJ - 1; j <= cellJ + 1; j++) {
       if (j < 0 || j >= board[i].length) continue
       if (i === cellI && j === cellJ) continue
-      if (board[i][j].isMine) MinesNegsCount++
+
+      updateCellShown(i, j, setMinesNegsCount(i, j, gBoard))
+    }
+  }
+}
+
+function setMinesNegsCount(cellI, cellJ, board) {
+  var minesNegsCount = 0
+  for (var i = cellI - 1; i <= cellI + 1; i++) {
+    if (i < 0 || i >= board.length) continue
+    for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+      if (j < 0 || j >= board[i].length) continue
+      if (i === cellI && j === cellJ) continue
+      if (board[i][j].isMine) minesNegsCount++
     }
   }
   //   update the checked cell object data key minesAroundCount = value to the key
-  board[cellI][cellJ].minesAroundCount = MinesNegsCount
+  board[cellI][cellJ].minesAroundCount = minesNegsCount
   console.log('cell.minesAroundCount', board[cellI][cellJ].minesAroundCount)
   //   return the value
-  return MinesNegsCount
+  return minesNegsCount
 }
 
-function onCellClicked(elCell, i, j) {
-  console.log('elCell', elCell)
-  //   console.log('j', j)
-  //   console.log('i', i)
-  //   check type - if mine
-  if (elCell.classList.contains('type-mine')) {
-    // execute game over
-    // todo: show all mines (should be in game over?)
-    gameOver()
+function gameOver() {
+  console.log('Game Over')
+  // todo: stop game
+  gGame.isOn = false
+  // todo: stop timer
+  // todo: change smiley
+}
+
+function setLevel(elLvlBtn) {
+  console.log('elLvlBtn', elLvlBtn)
+  switch (elLvlBtn.innerText) {
+    case 'Beginner':
+      gLevel.size = 4
+      gLevel.mines = 2
+      initGame()
+      break
+    case 'Medium':
+      gLevel.size = 8
+      gLevel.mines = 13
+      initGame()
+      break
+    case 'Expert':
+      gLevel.size = 12
+      gLevel.mines = 30
+      initGame()
+      break
   }
+}
 
-  //   check type - if not mine
-  if (elCell.classList.contains('type-not-mine')) {
-    console.log('open cell')
-    // console.log('gBoard[i][j].isShown', gBoard[i][j].isShown)
-    if (gBoard[i][j].isShown) return
-
-    // check negs
-    var MinesNegsCount = setMinesNegsCount(i, j, gBoard)
-    // update cell
-    updateCell(i, j, MinesNegsCount)
-
-    // if no mines are negs - open negs
-    if (!MinesNegsCount) {
-      expandShown(gBoard, elCell, i, j)
+function setMinesRnd(board) {
+  var minesCount = gLevel.mines
+  const possiblesCoords = []
+  //   get all possible locations for mines
+  for (var i = 0; i < board.length; i++) {
+    for (var j = 0; j < board[0].length; j++) {
+      possiblesCoords.push({ i, j })
     }
   }
-}
+  // shuffle locations array
+  shuffle(possiblesCoords)
 
-function updateCell(i, j, MinesNegsCount) {
-  // update cell object data - key isShown:true
-  gBoard[i][j].isShown = true
-  const elCurrCell = document.querySelector(`.i-${i}j-${j}`)
-  // show how many negs are mines only if its a valid value
-  elCurrCell.innerText = `${MinesNegsCount}`
-  //   update style
-  console.log('elCurrCell', elCurrCell)
-  elCurrCell.classList.add('shown')
-}
+  // locate mines
+  for (var i = 0; i < possiblesCoords.length; i++) {
+    const posI = possiblesCoords[i].i
+    const posJ = possiblesCoords[i].j
 
-function expandShown(board, elCell, i, j) {
-  console.log('elCell', elCell)
-  var negs = []
-  for (var iIdx = i - 1; iIdx <= i + 1; iIdx++) {
-    if (iIdx < 0 || iIdx >= board.length) continue
-    for (var jIdx = j - 1; jIdx <= j + 1; jIdx++) {
-      if (jIdx < 0 || jIdx >= board[iIdx].length) continue
-      if (iIdx === i && jIdx === j) continue
-      console.log('iIdx, jIdx', iIdx, jIdx)
+    if (board[posI][posJ].isShown) continue
+    if (board[posI][posJ].isMine) continue
+    board[posI][posJ].isMine = true
 
-      updateCell(iIdx, jIdx, '')
-    }
+    minesCount--
+    if (minesCount === 0) return
   }
 }
+
+function shuffle(items) {
+  var randIdx, keep, i
+  for (i = items.length - 1; i > 0; i--) {
+    randIdx = getRandomInt(0, items.length - 1)
+
+    keep = items[i]
+    items[i] = items[randIdx]
+    items[randIdx] = keep
+  }
+  return items
+}
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min) + min)
+}
+
+// function restartGame() {
+//   gGame.isOn = true
+//   gBoard = createBoard(gLevel.size)
+//   //   console.table(gBoard)
+//   //   console.log('gBoard', gBoard)
+//   renderBoard(gBoard)
+// }
 
 // function renderCell(cellI, cellJ, newClass) {
 //   console.log('newClass', newClass)
@@ -149,10 +260,3 @@ function expandShown(board, elCell, i, j) {
 //   console.log('elCurrCell', elCurrCell)
 //   elCurrCell.classList.add(`${newClass}`)
 // }
-
-function gameOver() {
-  console.log('Game Over')
-  // todo: stop timer
-  // todo: change smiley
-  // todo: don't allow any more clicking until starting a new game
-}

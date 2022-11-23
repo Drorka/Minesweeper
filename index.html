@@ -7,9 +7,15 @@
     <link rel="stylesheet" href="css/style.css" />
     <title>Minesweeper</title>
   </head>
-  <body onload="initGame()">
+  <body onload="initGame()" oncontextmenu="return false">
     <h1>Minesweeper</h1>
-    <div>
+    <div class="levels">
+      <button onclick="setLevel(this)">Beginner</button>
+      <button onclick="setLevel(this)">Medium</button>
+      <button onclick="setLevel(this)">Expert</button>
+    </div>
+    <div class="control">mines counter, timer, smiley</div>
+    <div class="container">
       <table class="board"></table>
     </div>
     <script src="js/main.js"></script>
