@@ -13,9 +13,6 @@ var gGame = {
   secsPassed: 0,
 }
 
-const MINE = '💣'
-const FLAG = '🚩'
-
 var gBoard
 
 function initGame() {
@@ -89,6 +86,8 @@ function onCellClicked(elCell, i, j, event) {
 
       //   check cell type - if mine
       if (elCell.classList.contains('type-mine')) {
+        // explode mine
+        elCell.classList.add('expld')
         // execute game over
         // todo: show all mines (should be in game over?)
         gameOver()
@@ -111,19 +110,23 @@ function onCellClicked(elCell, i, j, event) {
           expandShown(gBoard, elCell, i, j)
         }
       }
+      checkVictory()
       break
 
     case 2:
       if (gBoard[i][j].isShown) return
       console.log('right')
       updateCellMarked(elCell, i, j)
+      checkVictory()
       break
   }
 }
 
 function updateCellMarked(elCell, i, j) {
+  // check if cell is already marked and unmark it
+  if (gBoard[i][j].isMarked) gBoard[i][j].isMarked = false
   // update cell object data - key isMarked:true
-  gBoard[i][j].isMarked = true
+  else gBoard[i][j].isMarked = true
   //   update style
   elCell.classList.toggle('marked')
   //   elCell.innerText = FLAG
@@ -169,6 +172,34 @@ function setMinesNegsCount(cellI, cellJ, board) {
   console.log('cell.minesAroundCount', board[cellI][cellJ].minesAroundCount)
   //   return the value
   return minesNegsCount
+}
+
+function checkVictory() {
+  // reset counters each check
+  var markedCount = 0
+  var shownCount = 0
+  // check if all mines are marked
+  // check if all cells are shown
+  for (var i = 0; i < gBoard.length; i++) {
+    for (let j = 0; j < gBoard[i].length; j++) {
+      if (gBoard[i][j].isMarked) markedCount++
+      if (gBoard[i][j].isShown) shownCount++
+    }
+  }
+
+  // apply counters values in global variables
+  gGame.markedCount = markedCount
+  gGame.shownCount = shownCount
+  console.log('gGame.markedCount', gGame.markedCount)
+  console.log('gGame.shownCount', gGame.shownCount)
+  // check winning condition
+  if (
+    gGame.markedCount === gLevel.mines &&
+    gGame.shownCount === gLevel.size ** 2 - gLevel.mines
+  ) {
+    console.log('you won')
+    gGame.isOn = false
+  }
 }
 
 function gameOver() {

@@ -33,8 +33,13 @@ td {
     background-color: lightgrey;
     color: black;
 }
+
 .marked {
     background-color: rgb(177, 60, 84);
+    background-image: url('../img/checkpoint-flag-icon.png');
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .shown {
@@ -43,9 +48,22 @@ td {
 }
 
 .type-mine {
-    /* background-color: red; */
-    
+    /* visibility: hidden;
+    background-color: lightgrey;
+    background-image: url('../img/bomb-icon.png');
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: center; */
 }
+
+.expld {
+    background-color: red;
+    background-image: url('../img/bomb-icon.png');
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 
 
 
