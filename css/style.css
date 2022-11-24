@@ -17,7 +17,7 @@ h1 {
     width: 70%;
     height: 70px;
     margin: auto;
-    border: 5px solid black;
+    /* border: 5px solid black; */
     align-items: center;
 }
 
@@ -44,11 +44,41 @@ h1 {
 
 }
 
+.lives {
+    display: flex;
+    width: 20%;
+    height: 25px;
+    margin: auto;
+    align-items: center;
+    /* border: 5px solid black; */
+}
+.lives-element {
+    flex: 1;    
+    height: 25px;
+    line-height: 25px;
+    /* margin: 5px; */
+    /* border: 2px solid blue; */
+}
+
+.live1 {
+    background-image: url('../img/heart-icon.png');
+    background-size: 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.live2 {
+    background-image: url('../img/heart-icon.png');
+    background-size: 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
 
 table {
     width: fit-content;
     height:fit-content;
     margin: auto;
+    margin-top: 15px;
 }
 
 td {

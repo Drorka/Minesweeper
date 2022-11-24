@@ -4,8 +4,7 @@ function onCellClicked(elCell, i, j, event) {
   //   console.log('event', event)
   //   check if game is on
   if (!gGame.isOn) return
-  isFirstClick()
-  startTimer()
+  if (isFirstClick()) firstClickSetup()
 
   //   check which mouse button was clicked
   switch (event.button) {
@@ -14,10 +13,18 @@ function onCellClicked(elCell, i, j, event) {
 
       //   check cell type - if mine
       if (elCell.classList.contains('type-mine')) {
-        // explode mine
+        // check if already exploded - if yes - skip, if not - explode
+        if (elCell.classList.contains('expld')) break
         elCell.classList.add('expld')
-        // execute game over
-        gameOver()
+
+        // reduce lives
+        gGame.lives--
+        console.log('gGame.lives', gGame.lives)
+        // render lives
+        var elLives = document.querySelector('.lives-element')
+        elLives.classList.remove('lives-element')
+        // check lives - if 0 game over, otherwise continue game
+        if (gGame.lives === 0) gameOver()
       }
 
       //   check cell type - if not mine
@@ -150,6 +157,7 @@ function gameOver() {
   // stop game
   gGame.isOn = false
   // todo: stop timer
+  // resetTime()
   //update smiley
   updateControlSmiley('die')
 }

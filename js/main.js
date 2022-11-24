@@ -11,17 +11,16 @@ var gGame = {
   shownCount: 0,
   markedCount: 0,
   secsPassed: 0,
+  lives: 2,
 }
 
 var gBoard
-var gInterval
+var gTimerIntervalId = null
 var gStartTime
 
 // * set board
 function initGame() {
   gGame.isOn = true
-  if (gInterval) clearInterval(gInterval)
-  resetTime()
   gBoard = createBoard(gLevel.size)
   setMinesRnd(gBoard)
   updateControlMinesCount(gLevel.mines, gGame.markedCount)
@@ -135,16 +134,33 @@ function setMinesRnd(board) {
 // * set board / game flow?
 function startTimer() {
   gStartTime = Date.now()
-  gInterval = setInterval(() => {
+  gTimerIntervalId = setInterval(() => {
     const seconds = (Date.now() - gStartTime) / 1000
     var elTimer = document.querySelector('.timer')
     elTimer.innerText = seconds.toFixed(0)
   }, 1)
+  console.log('gTimerIntervalId - starttimer', gTimerIntervalId)
 }
 
 function resetTime() {
+  console.log('gTimerIntervalId - reset before', gTimerIntervalId)
+  clearInterval(gTimerIntervalId)
+  console.log('gTimerIntervalId - reset after', gTimerIntervalId)
   var elTimer = document.querySelector('.timer')
   elTimer.innerText = '0'
+}
+
+function isFirstClick() {
+  if (!gTimerIntervalId && gGame.isOn) {
+    console.log('gTimerIntervalId - isfirst', gTimerIntervalId)
+    console.log('gGame.isOn', gGame.isOn)
+    return true
+  }
+}
+
+function firstClickSetup() {
+  // todo: start timer
+  // todo: safe-click - set mines on board
 }
 
 // function restartGame() {
@@ -162,28 +178,4 @@ function resetTime() {
 //   const elCurrCell = document.querySelector(`.i-${cellI}j-${cellJ}`)
 //   console.log('elCurrCell', elCurrCell)
 //   elCurrCell.classList.add(`${newClass}`)
-// }
-
-// * to be located in cellclicked function
-if (isFirstClick()) firstClickSetup()
-
-function isFirstClick() {
-  if (!gInterval && gGame.isOn) {
-    return true
-  }
-}
-
-// function firstClickSetup() {
-//   startTimer()
-
-//   // gGame.setMines()
-//   gGame.cellsLeft = gLevel.size ** 2 - gGame.marksLeft
-// }
-
-// function startTimer(secsPassed = 0) {
-//   const startTime = Date.now()
-//   gGame.timerIntrvlIdx = setInterval(
-//     () => updateTime(startTime, secsPassed),
-//     1000
-//   )
 // }
