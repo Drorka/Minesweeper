@@ -1,7 +1,7 @@
 body {
-background-color: antiquewhite;
-text-align: center;
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: antiquewhite;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 h1 {
@@ -13,6 +13,34 @@ h1 {
 }
 
 .control {
+    display: flex;
+    width: 70%;
+    height: 70px;
+    margin: auto;
+    border: 5px solid black;
+    align-items: center;
+}
+
+
+.control-element {
+    flex: 1;
+    font-size: 25px;
+    height: 60px;
+    line-height: 60px;
+    margin: 5px;
+    font-weight: bolder;
+    /* border: 2px solid blue; */
+    }
+
+.mines-counter {
+
+}
+
+.smiley {
+
+}
+
+.timer {
 
 }
 
