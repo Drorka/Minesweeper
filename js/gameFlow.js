@@ -4,6 +4,8 @@ function onCellClicked(elCell, i, j, event) {
   //   console.log('event', event)
   //   check if game is on
   if (!gGame.isOn) return
+  isFirstClick()
+  startTimer()
 
   //   check which mouse button was clicked
   switch (event.button) {

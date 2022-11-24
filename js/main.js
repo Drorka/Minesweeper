@@ -14,10 +14,14 @@ var gGame = {
 }
 
 var gBoard
+var gInterval
+var gStartTime
 
 // * set board
 function initGame() {
   gGame.isOn = true
+  if (gInterval) clearInterval(gInterval)
+  resetTime()
   gBoard = createBoard(gLevel.size)
   setMinesRnd(gBoard)
   updateControlMinesCount(gLevel.mines, gGame.markedCount)
@@ -128,6 +132,21 @@ function setMinesRnd(board) {
   }
 }
 
+// * set board / game flow?
+function startTimer() {
+  gStartTime = Date.now()
+  gInterval = setInterval(() => {
+    const seconds = (Date.now() - gStartTime) / 1000
+    var elTimer = document.querySelector('.timer')
+    elTimer.innerText = seconds.toFixed(0)
+  }, 1)
+}
+
+function resetTime() {
+  var elTimer = document.querySelector('.timer')
+  elTimer.innerText = '0'
+}
+
 // function restartGame() {
 //   gGame.isOn = true
 //   gBoard = createBoard(gLevel.size)
@@ -143,4 +162,28 @@ function setMinesRnd(board) {
 //   const elCurrCell = document.querySelector(`.i-${cellI}j-${cellJ}`)
 //   console.log('elCurrCell', elCurrCell)
 //   elCurrCell.classList.add(`${newClass}`)
+// }
+
+// * to be located in cellclicked function
+if (isFirstClick()) firstClickSetup()
+
+function isFirstClick() {
+  if (!gInterval && gGame.isOn) {
+    return true
+  }
+}
+
+// function firstClickSetup() {
+//   startTimer()
+
+//   // gGame.setMines()
+//   gGame.cellsLeft = gLevel.size ** 2 - gGame.marksLeft
+// }
+
+// function startTimer(secsPassed = 0) {
+//   const startTime = Date.now()
+//   gGame.timerIntrvlIdx = setInterval(
+//     () => updateTime(startTime, secsPassed),
+//     1000
+//   )
 // }
