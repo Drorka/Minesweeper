@@ -21,8 +21,10 @@ function onCellClicked(elCell, i, j, event) {
         gGame.lives--
         console.log('gGame.lives', gGame.lives)
         // render lives
-        var elLives = document.querySelector('.lives-element')
-        elLives.classList.remove('lives-element')
+        var elLives = document.querySelector('.life-shown')
+        elLives.classList.remove('life-shown')
+        // reduce control mines count
+        updateControlMinesCount()
         // check lives - if 0 game over, otherwise continue game
         if (gGame.lives === 0) gameOver()
       }
@@ -49,6 +51,7 @@ function onCellClicked(elCell, i, j, event) {
 
     case 2:
       if (gBoard[i][j].isShown) return
+      if (elCell.classList.contains('expld')) return
       console.log('right')
       updateCellMarked(elCell, i, j)
       checkVictory()
@@ -107,7 +110,7 @@ function setMinesNegsCount(cellI, cellJ, board) {
   }
   //   update the checked cell object data key minesAroundCount = value to the key
   board[cellI][cellJ].minesAroundCount = minesNegsCount
-  console.log('cell.minesAroundCount', board[cellI][cellJ].minesAroundCount)
+  // console.log('cell.minesAroundCount', board[cellI][cellJ].minesAroundCount)
   //   return the value
   return minesNegsCount
 }

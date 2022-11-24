@@ -21,16 +21,20 @@ var gStartTime
 // * set board
 function initGame() {
   gGame.isOn = true
+  clearInterval(gTimerIntervalId)
+  console.log('gTimerIntervalId', gTimerIntervalId)
   gBoard = createBoard(gLevel.size)
   setMinesRnd(gBoard)
   updateControlMinesCount(gLevel.mines, gGame.markedCount)
   updateControlSmiley('restart')
-
-  //   console.table(gBoard)
-  //   console.log('gBoard', gBoard)
+  resetControlLives()
   // todo: set timer (will be activated with first board click)
-  // todo: set mines count
   renderBoard(gBoard)
+}
+
+function restartGame() {
+  // todo: restart game on same level
+  console.log('restart game')
 }
 
 // * set board
@@ -89,16 +93,19 @@ function setLevel(elLvlBtn) {
     case 'Beginner':
       gLevel.size = 4
       gLevel.mines = 2
+      resetTimer()
       initGame()
       break
     case 'Medium':
       gLevel.size = 8
       gLevel.mines = 13
+      resetTimer()
       initGame()
       break
     case 'Expert':
       gLevel.size = 12
       gLevel.mines = 30
+      resetTimer()
       initGame()
       break
   }
@@ -131,36 +138,47 @@ function setMinesRnd(board) {
   }
 }
 
-// * set board / game flow?
-function startTimer() {
-  gStartTime = Date.now()
-  gTimerIntervalId = setInterval(() => {
-    const seconds = (Date.now() - gStartTime) / 1000
-    var elTimer = document.querySelector('.timer')
-    elTimer.innerText = seconds.toFixed(0)
-  }, 1)
-  console.log('gTimerIntervalId - starttimer', gTimerIntervalId)
-}
-
-function resetTime() {
-  console.log('gTimerIntervalId - reset before', gTimerIntervalId)
-  clearInterval(gTimerIntervalId)
-  console.log('gTimerIntervalId - reset after', gTimerIntervalId)
-  var elTimer = document.querySelector('.timer')
-  elTimer.innerText = '0'
+function resetControlLives() {
+  // update model
+  gGame.lives = 2
+  // update dom
+  var elLives = document.querySelectorAll('.lives-element')
+  for (let i = 0; i < elLives.length; i++) {
+    elLives[i].classList.add('life-shown')
+  }
 }
 
 function isFirstClick() {
   if (!gTimerIntervalId && gGame.isOn) {
     console.log('gTimerIntervalId - isfirst', gTimerIntervalId)
-    console.log('gGame.isOn', gGame.isOn)
     return true
   }
 }
 
 function firstClickSetup() {
   // todo: start timer
+  startTimer()
   // todo: safe-click - set mines on board
+}
+
+// * set board / game flow?
+function startTimer() {
+  console.log('timerID before startTimer', gTimerIntervalId)
+  gStartTime = Date.now()
+  gTimerIntervalId = setInterval(() => {
+    const seconds = (Date.now() - gStartTime) / 1000
+    var elTimer = document.querySelector('.timer')
+    elTimer.innerText = seconds.toFixed(0)
+  }, 1)
+  console.log('timerID after startTimer', gTimerIntervalId)
+}
+
+function resetTimer() {
+  clearInterval(gTimerIntervalId)
+  console.log('timerID after resetTimer', gTimerIntervalId)
+
+  var elTimer = document.querySelector('.timer')
+  elTimer.innerText = '0'
 }
 
 // function restartGame() {
