@@ -79,21 +79,8 @@ function updateCellMarked(elCell, i, j) {
 }
 
 // * game flow
-function updateCellShown(i, j, minesNegsCount) {
-  // update cell object data - key isShown:true
-  gBoard[i][j].isShown = true
-  const elCurrCell = document.querySelector(`.i-${i}j-${j}`)
-  console.log('elCurrCell', elCurrCell)
-  // show how many negs are mines only if its a valid value
-  if (minesNegsCount) elCurrCell.innerText = `${minesNegsCount}`
-  //   update style
-  elCurrCell.classList.add('shown')
-}
-
-// * game flow
 function expandShown(board, elCell, cellI, cellJ) {
   //   console.log('elCell', elCell)
-  var negs = []
   for (var i = cellI - 1; i <= cellI + 1; i++) {
     if (i < 0 || i >= board.length) continue
     for (var j = cellJ - 1; j <= cellJ + 1; j++) {
@@ -103,6 +90,18 @@ function expandShown(board, elCell, cellI, cellJ) {
       updateCellShown(i, j, setMinesNegsCount(i, j, gBoard))
     }
   }
+}
+
+// * game flow
+function updateCellShown(i, j, minesNegsCount) {
+  // update cell object data - key isShown:true
+  gBoard[i][j].isShown = true
+  const elCurrCell = document.querySelector(`.i-${i}j-${j}`)
+  console.log('elCurrCell', elCurrCell)
+  // show how many negs are mines only if its a valid value
+  if (minesNegsCount) elCurrCell.innerText = `${minesNegsCount}`
+  //   update style
+  elCurrCell.classList.add('shown')
 }
 
 // * game flow

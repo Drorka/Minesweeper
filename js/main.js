@@ -54,9 +54,6 @@ function createBoard(boardSize) {
       }
     }
   }
-  // locating mines manually
-  //   board[1][1].isMine = true
-  //   board[1][0].isMine = true
   return board
 }
 
@@ -188,20 +185,3 @@ function myTimer() {
   var elTimer = document.querySelector('.timer')
   elTimer.innerText = seconds.toFixed(0)
 }
-
-// function restartGame() {
-//   gGame.isOn = true
-//   gBoard = createBoard(gLevel.size)
-//   //   console.table(gBoard)
-//   //   console.log('gBoard', gBoard)
-//   renderBoard(gBoard)
-// }
-
-// function renderCell(cellI, cellJ, newClass) {
-//   console.log('newClass', newClass)
-//   console.log('cellI, cellJ', cellI, cellJ)
-//   // Select the elCell and set the value
-//   const elCurrCell = document.querySelector(`.i-${cellI}j-${cellJ}`)
-//   console.log('elCurrCell', elCurrCell)
-//   elCurrCell.classList.add(`${newClass}`)
-// }
