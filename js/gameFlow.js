@@ -4,12 +4,19 @@ function onCellClicked(elCell, i, j, event) {
   //   console.log('event', event)
   //   check if game is on
   if (!gGame.isOn) return
-  if (isFirstClick()) firstClickSetup()
+  // if (isFirstClick()) firstClickSetup()
 
   //   check which mouse button was clicked
   switch (event.button) {
     case 0:
       console.log('left')
+      if (gGame.isSafeClick === true) {
+        console.log('gGame.isSafeClick', gGame.isSafeClick)
+        gGame.isSafeClick = false
+        console.log('gGame.isSafeClick', gGame.isSafeClick)
+        setMinesRnd(gBoard)
+        renderBoard(gBoard)
+      }
 
       //   check cell type - if mine
       if (elCell.classList.contains('type-mine')) {
@@ -23,8 +30,9 @@ function onCellClicked(elCell, i, j, event) {
         // render lives
         var elLives = document.querySelector('.life-shown')
         elLives.classList.remove('life-shown')
-        // reduce control mines count
-        updateControlMinesCount()
+        // reduce control-panel mines count
+        gBoard[i][j].isMarked = true
+        updateControlMinesCount(gLevel.mines, gGame.markedCount)
         // check lives - if 0 game over, otherwise continue game
         if (gGame.lives === 0) gameOver()
       }
@@ -159,8 +167,8 @@ function gameOver() {
   }
   // stop game
   gGame.isOn = false
-  // todo: stop timer
-  // resetTime()
+  // stop timer
+  resetTimer()
   //update smiley
   updateControlSmiley('die')
 }

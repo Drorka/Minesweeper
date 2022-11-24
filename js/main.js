@@ -12,19 +12,18 @@ var gGame = {
   markedCount: 0,
   secsPassed: 0,
   lives: 2,
+  isSafeClick: true,
 }
 
 var gBoard
-var gTimerIntervalId = null
+var gTimerIntervalId
 var gStartTime
 
 // * set board
 function initGame() {
   gGame.isOn = true
-  clearInterval(gTimerIntervalId)
-  console.log('gTimerIntervalId', gTimerIntervalId)
+  resetTimer()
   gBoard = createBoard(gLevel.size)
-  setMinesRnd(gBoard)
   updateControlMinesCount(gLevel.mines, gGame.markedCount)
   updateControlSmiley('restart')
   resetControlLives()
@@ -93,18 +92,27 @@ function setLevel(elLvlBtn) {
     case 'Beginner':
       gLevel.size = 4
       gLevel.mines = 2
+      gGame.shownCount = 0
+      gGame.markedCount = 0
+      gGame.isSafeClick = true
       resetTimer()
       initGame()
       break
     case 'Medium':
       gLevel.size = 8
       gLevel.mines = 13
+      gGame.shownCount = 0
+      gGame.markedCount = 0
+      gGame.isSafeClick = true
       resetTimer()
       initGame()
       break
     case 'Expert':
       gLevel.size = 12
       gLevel.mines = 30
+      gGame.shownCount = 0
+      gGame.markedCount = 0
+      gGame.isSafeClick = true
       resetTimer()
       initGame()
       break
@@ -162,23 +170,23 @@ function firstClickSetup() {
 }
 
 // * set board / game flow?
+
 function startTimer() {
-  console.log('timerID before startTimer', gTimerIntervalId)
   gStartTime = Date.now()
-  gTimerIntervalId = setInterval(() => {
-    const seconds = (Date.now() - gStartTime) / 1000
-    var elTimer = document.querySelector('.timer')
-    elTimer.innerText = seconds.toFixed(0)
-  }, 1)
-  console.log('timerID after startTimer', gTimerIntervalId)
+  gTimerIntervalId = setInterval(myTimer, 1000)
 }
 
 function resetTimer() {
   clearInterval(gTimerIntervalId)
-  console.log('timerID after resetTimer', gTimerIntervalId)
-
+  // console.log('gTimerIntervalId', gTimerIntervalId)
   var elTimer = document.querySelector('.timer')
   elTimer.innerText = '0'
+}
+
+function myTimer() {
+  const seconds = (Date.now() - gStartTime) / 1000
+  var elTimer = document.querySelector('.timer')
+  elTimer.innerText = seconds.toFixed(0)
 }
 
 // function restartGame() {
